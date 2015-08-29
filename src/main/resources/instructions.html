@@ -1,0 +1,7 @@
+Please visit <a href="http://benchmark.nicolasfiorini.info/">http://benchmark.nicolasfiorini.info/</a> for more details on the project.
+
+<p><b>1.</b> <a href="benchmark_sc.zip" >Download</a> the benchmark data.</p>
+<p><b>2.</b> Have a look at the data. They consist of one tuning dataset and 7 evaluation datasets. For each of them, you will find a csv file that maps bookmark URIs to WordNet synset URIs. A WordNet 3.0 dump is provided in the knowledge folder. Note that a README file in this folder gives some details regarding the creation of the benchmark.</p>
+<p><b>3.</b> Tune your method with the tuning dataset, then run it on the evaluation datasets by using the provided WordNet dump. In order to evaluate your approach according to the next step, your algorithm must output trees in <a href="http://evolution.genetics.washington.edu/phylip/newicktree.html">Newick format</a>.</p>
+<p><b>4.</b> Install the ETE Python Toolkit by following <a href="http://etetoolkit.org/download/">these instructions</a>. Note that the benchmark has been tested with Python v2.7.</p>
+<p><b>5.</b> Use the python script provided to compare two trees. It uses the Robinson-Fould distance. For each dataset, compute the distance of your tree with all expert ones, then average the distances. This gives you the score of your output on this dataset.</p>
