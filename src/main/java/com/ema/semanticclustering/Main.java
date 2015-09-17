@@ -99,8 +99,8 @@ public class Main {
          */
         ArrayList<Integer> strategies = new ArrayList();
         strategies.add(1);
-        strategies.add(2);
-        strategies.add(3);
+//        strategies.add(2);
+//        strategies.add(3);
         
         /*
          *  The configurations to use:
@@ -110,8 +110,8 @@ public class Main {
          */
         ArrayList<Integer> configs = new ArrayList();
         configs.add(1);
-        configs.add(2);
-        configs.add(3);
+//        configs.add(2);
+//        configs.add(3);
 
         for (String bookmarks_info : datasets) {
 

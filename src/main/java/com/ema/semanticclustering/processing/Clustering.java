@@ -218,7 +218,7 @@ public class Clustering {
         double distn2 = min;
         
         // Only classical HAC doesn't use semantic similarities for branch lenths
-        if(strategy == 2) {
+        if(strategy != 3) {
             distn1 = 1-(Index.getInstance().getEngineManager().calculateGroupwise(newNode.getData().getConcepts(), n1.getData().getConcepts()));
             distn2 = 1-(Index.getInstance().getEngineManager().calculateGroupwise(newNode.getData().getConcepts(), n2.getData().getConcepts()));
         }
