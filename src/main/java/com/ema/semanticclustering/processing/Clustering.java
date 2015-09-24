@@ -37,8 +37,11 @@ package com.ema.semanticclustering.processing;
 import com.ema.semanticclustering.model.Node;
 import com.ema.semanticclustering.model.Tree;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import managers.EntityLabelizer;
 import org.openrdf.model.URI;
@@ -131,8 +134,8 @@ public class Clustering {
                 // Classical clustering : fetching all cluster elements
                 ArrayList<Node> c1 = new ArrayList();
                 ArrayList<Node> c2 = new ArrayList();
-                c1.addAll(getAllChildren(nodes.get(k)));
-                c2.addAll(getAllChildren(toAdd));
+                c1.addAll(getAllChildren(nodes.get(k),0).keySet());
+                c2.addAll(getAllChildren(toAdd,0).keySet());
                 double dist = 0;
                 // Single linkage (min distances)
                 // Complete linkage (max distances)
@@ -170,14 +173,16 @@ public class Clustering {
         nodes.remove(n);
     }
     
-    public List<Node> getAllChildren(Node n) {
-        List<Node> children = new ArrayList();
+    //public List<Node> getAllChildren(Node n) {
+    public Map<Node,Double> getAllChildren(Node n, double curdist) {
+        HashMap<Node,Double> children = new HashMap();
         if(!n.getChildren().isEmpty()) {
             for(Node c : n.getChildren()) {
-                children.addAll(getAllChildren(c));
+                double tmp = curdist + c.getDistanceToParent();
+                children.putAll(getAllChildren(c,tmp));
             }
         } else {
-            children.add(n);
+            children.put(n,curdist);
         }
         return children;
     }
@@ -196,19 +201,22 @@ public class Clustering {
             }
         }
         // Create the node
-        ArrayList<Node> toCluster = new ArrayList();
+        //ArrayList<Node> toCluster = new ArrayList();
+        HashMap<Node,Double> toCluster = new HashMap();
         // Here we only add the children as the neighbours (strategy 2)
         if(strategy == 2) {
-            toCluster.add(n1);
-            toCluster.add(n2);
+            double n1nb = (double)getAllChildren(n1,0).size();
+            double n2nb = (double)getAllChildren(n2,0).size();
+            toCluster.put(n1,n1nb);
+            toCluster.put(n2,n2nb);
         }
         // But we can also add all their children! (strategy 1 or 3)
         // Because we want to compare classical HAC with proper node
         // labels, otherwise the post-process will make it as good
         // as LSC, or worse.
         else {
-            toCluster.addAll(getAllChildren(n1));
-            toCluster.addAll(getAllChildren(n2));
+            toCluster.putAll(getAllChildren(n1,0));
+            toCluster.putAll(getAllChildren(n2,0));
         }
         Node newNode = computeNode(toCluster);
         
@@ -232,7 +240,8 @@ public class Clustering {
         removeNode(nodes.indexOf(n2));
     }
     
-    private Node computeNode(ArrayList<Node> inCluster) throws SLIB_Ex_Critic, SLIB_Exception {
+    //private Node computeNode(ArrayList<Node> inCluster) throws SLIB_Ex_Critic, SLIB_Exception {
+    private Node computeNode(HashMap<Node,Double> inCluster) throws SLIB_Ex_Critic, SLIB_Exception {
         // Node creation
         Entity agreg = new Entity();
         agreg.setId("");
@@ -245,10 +254,13 @@ public class Clustering {
         i.clear();
         ArrayList<PointDist> points = new ArrayList();
         Set<URI> firstSuggestion = new HashSet();
-        for (Node e : inCluster) {
-            agreg.setId((agreg.getId().equals("") ? "" : agreg.getId()+"|")+e.getData().getId());
-            i.addEntity(e.getData());
-            points.add(new PointDist(new Point(0, 0, e.getData().getId()),0));
+        for (Entry<Node,Double> e : inCluster.entrySet()) {
+            agreg.setId((agreg.getId().equals("") ? "" : agreg.getId()+"|")+e.getKey().getData().getId());
+            i.addEntity(e.getKey().getData());
+            if(strategy == 2)
+                points.add(new PointDist(new Point(0, 0, e.getKey().getData().getId()),e.getValue())); 
+            else
+                points.add(new PointDist(new Point(0, 0, e.getKey().getData().getId()),10));
         }
         ccs.setPoints(points);
         

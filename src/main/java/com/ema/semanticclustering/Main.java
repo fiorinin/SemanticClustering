@@ -98,8 +98,8 @@ public class Main {
          *    3: corresponds to baseline (classical HAC)
          */
         ArrayList<Integer> strategies = new ArrayList();
-        strategies.add(1);
-//        strategies.add(2);
+//        strategies.add(1);
+        strategies.add(2);
 //        strategies.add(3);
         
         /*
@@ -200,6 +200,7 @@ public class Main {
             el.setFilter(0);
             el.setMap(false);
             el.setIncludeAncestors(true);
+            el.setClustering(true);
             
             // Run the clustering algorithm for each strategy and for each config
             for(int strategy : strategies) {

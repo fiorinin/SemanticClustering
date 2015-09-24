@@ -26,6 +26,7 @@ configs = ["full","half","none"]
 
 for strategy in strategies:
 	for config in configs:
+		print strategy+config+"\n"
 		for j in range(1,5):
 			for i in range(1,8):
 				if os.path.isfile("eval"+str(i)+"/expert"+str(j)+".nwk"):
